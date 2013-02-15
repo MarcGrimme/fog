@@ -32,6 +32,10 @@ module Fog
           service.servertypes({:datacenter => name }.merge(filters))
         end
 
+        def customfields filters = {}
+          service.customfields({ :datacenter => name}.merge(filters))
+        end
+
         def to_s
           name
         end

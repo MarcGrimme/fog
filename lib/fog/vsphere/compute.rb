@@ -33,6 +33,10 @@ module Fog
       collection :datastores
       model :folder
       collection :folders
+      model :customvalue
+      collection :customvalues
+      model :customfield
+      collection :customfields
 
       request_path 'fog/vsphere/requests/compute'
       request :current_time
@@ -70,6 +74,8 @@ module Fog
       request :get_server_type
       request :list_interface_types
       request :get_interface_type
+      request :list_vm_customvalues
+      request :list_customfields
 
       module Shared
 
