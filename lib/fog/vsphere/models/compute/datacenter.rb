@@ -27,6 +27,10 @@ module Fog
         def virtual_machines filters = {}
           service.servers({ :datacenter => name }.merge(filters))
         end
+        
+        def servertypes filters={}
+          service.servertypes({:datacenter => name }.merge(filters))
+        end
 
         def to_s
           name
