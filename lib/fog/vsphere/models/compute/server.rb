@@ -165,19 +165,23 @@ module Fog
         def interfaces
           attributes[:interfaces] ||= id.nil? ? [] : service.interfaces( :vm => self )
         end
+        
+        def interface_ready? attrs
+          (attrs.is_a? Hash and attrs[:blocking]) or attrs.is_a? Fog::Compute::Vsphere::Interface
+        end
 
         def add_interface attrs
-#          wait_for { stopped? } if attrs[:blocking]
+          wait_for { not ready? } if interface_ready? attrs
           service.add_vm_interface(id, attrs)
         end
 
         def update_interface attrs
-#          wait_for { stopped? } if attrs[:blocking]
+          wait_for { not ready? } if interface_ready? attrs
           service.update_vm_interface(id, attrs)
         end
 
         def destroy_interface attrs
-#          wait_for { stopped? } if attrs[:blocking]
+          wait_for { not ready? } if interface_ready? attrs
           service.destroy_vm_interface(id, attrs)
         end
 
