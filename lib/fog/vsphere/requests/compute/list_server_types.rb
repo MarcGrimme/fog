@@ -4,15 +4,23 @@ module Fog
       class Real
         def list_server_types(filters={})
           datacenter_name = filters[:datacenter]
-          raw_server_types(datacenter_name).map do | servertype |
-            server_type_attributes(servertype, datacenter_name) 
-          end.compact
+          servertypes=raw_server_types(datacenter_name)
+          if servertypes
+            servertypes.map do | servertype |
+               server_type_attributes(servertype, datacenter_name) 
+            end.compact
+          else
+            nil
+          end
           #select{ | guestdesc | guestdesc.select{ | k, v | filter.has_key?(k) and filter[k] == v }==filter }
         end
       
         def raw_server_types(datacenter_name, filter={})
           datacenter=find_raw_datacenter(datacenter_name)
-          datacenter.hostFolder.childEntity.grep(RbVmomi::VIM::ClusterComputeResource).first.environmentBrowser.QueryConfigOption[:guestOSDescriptor]
+          environmentBrowser=datacenter.hostFolder.childEntity.grep(RbVmomi::VIM::ComputeResource).first.environmentBrowser
+          if environmentBrowser
+            environmentBrowser.QueryConfigOption[:guestOSDescriptor]
+          end
         end
         
         protected
