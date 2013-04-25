@@ -11,6 +11,7 @@ module Fog
         attribute :network
         attribute :bridge
         attribute :model
+        alias :id :mac
 
         attr_accessor :server
 

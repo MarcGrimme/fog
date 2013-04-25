@@ -9,6 +9,7 @@ module Fog
         identity :name
         attribute :mac
         attribute :active
+        alias :id :name
 
         def save
           raise Fog::Errors::Error.new('Creating a new interface is not yet implemented. Contributions welcome!')
