@@ -170,18 +170,21 @@ module Fog
           (attrs.is_a? Hash and attrs[:blocking]) or attrs.is_a? Fog::Compute::Vsphere::Interface
         end
 
-        def add_interface attrs
-          wait_for { not ready? } if interface_ready? attrs
+        def add_interface attrs, opts={}
+          attrs[:datacenter]=datacenter if attrs.is_a? Hash and not attrs.has_key? :datacenter
+          wait_for { not ready? } if not opts[:force] and interface_ready? attrs
           service.add_vm_interface(id, attrs)
         end
 
-        def update_interface attrs
-          wait_for { not ready? } if interface_ready? attrs
+        def update_interface attrs, opts={}
+          attrs[:datacenter]=datacenter if attrs.is_a? Hash and not attrs.has_key? :datacenter
+          wait_for { not ready? } if not opts[:force] and interface_ready? attrs
           service.update_vm_interface(id, attrs)
         end
 
-        def destroy_interface attrs
-          wait_for { not ready? } if interface_ready? attrs
+        def destroy_interface attrs, opts={}
+          attrs[:datacenter]=datacenter if attrs.is_a? Hash and not attrs.has_key? :datacenter
+          wait_for { not ready? } if not opts[:force] and interface_ready? attrs
           service.destroy_vm_interface(id, attrs)
         end
 
