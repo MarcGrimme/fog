@@ -7,21 +7,26 @@ module Fog
           raise ArgumentError, "instance id is a required parameter" unless vmid
 
           interface=get_interface_from_options(vmid, options)
-          vm_reconfig_hardware('instance_uuid' => vmid, 'hardware_spec' => {'deviceChange'=>[create_interface(interface)]})
+          vm_reconfig_hardware('instance_uuid' => vmid, 'hardware_spec' => {'deviceChange'=>[create_interface(interface, 0, :add, options)]})
         end
 
         def destroy_vm_interface(vmid, options = {})
           raise ArgumentError, "instance id is a required parameter" unless vmid
 
-          interface=get_vm_interface(vmid, options)
-          vm_reconfig_hardware('instance_uuid' => vmid, 'hardware_spec' => {'deviceChange'=>[create_interface(interface, interface.key, :remove)]})
+          if options.is_a? Hash then
+             interface=get_interface_from_options(vmid, options)
+          else
+             interface=get_vm_interface(vmid, options)
+          end
+            
+          vm_reconfig_hardware('instance_uuid' => vmid, 'hardware_spec' => {'deviceChange'=>[create_interface(interface, interface.key, :remove, options)]})
         end
         
         def update_vm_interface(vmid, options = {})
           raise ArgumentError, "instance id is a required parameter" unless vmid
-
+            
           interface=get_vm_interface(vmid, options)
-          vm_reconfig_hardware('instance_uuid' => vmid, 'hardware_spec' => {'deviceChange'=>[create_interface(interface, interface.key, :edit)]})          
+          vm_reconfig_hardware('instance_uuid' => vmid, 'hardware_spec' => {'deviceChange'=>[create_interface(interface, interface.key, :edit, options)]})          
         end
 
         private
