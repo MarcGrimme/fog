@@ -51,6 +51,7 @@ module Fog
         def initialize(attributes={} )
           super defaults.merge(attributes)
           self.instance_uuid ||= id # TODO: remvoe instance_uuid as it can be replaced with simple id
+          initialize_cpu_layout
           initialize_interfaces
           initialize_volumes
           initialize_customvalues
@@ -162,7 +163,7 @@ module Fog
         end
 
         def sockets
-          cpus / corespersocket
+          cpus.to_i / corespersocket.to_i
         end
         
         def mac
@@ -239,7 +240,7 @@ module Fog
 
         def defaults
           {
-            :cpus      => 1,
+#            :cpus      => 1,
 #            :corespersocket => 1,
             :memory_mb => 512,
 #            :guest_id  => 'otherGuest',
@@ -247,6 +248,16 @@ module Fog
           }
         end
 
+        def initialize_cpu_layout
+          attributes[:cpus] ||= 1
+          attributes[:corespersocket] ||= 1
+          # if parameter sockets is given we suppose that this is a new machine created with sockets and corespersocket as parameter. 
+          # We will equate cpus from their product.
+          if attributes[:sockets]
+            attributes[:cpus]=attributes[:corespersocket].to_i*attributes[:sockets].to_i
+            self.attributes.delete(:sockets)
+          end
+        end
         def initialize_interfaces
           if attributes[:interfaces] and attributes[:interfaces].is_a?(Array)
             self.attributes[:interfaces].map! { |nic| nic.is_a?(Hash) ? service.interfaces.new(nic) : nic }
